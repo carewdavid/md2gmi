@@ -18,6 +18,10 @@ type link struct {
 	text string
 }
 
+func (l link) String() string {
+	return FormatLink(l.url, l.text)
+}
+
 func (p *linkParser) Scan() bool {
 	return p.input.Scan()
 }
