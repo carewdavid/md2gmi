@@ -10,7 +10,12 @@ import (
 type linkParser struct {
 	input *bufio.Scanner
 	seen  strings.Builder
-	links []string
+	links []link
+}
+
+type link struct {
+	url  string
+	text string
 }
 
 func (p *linkParser) Scan() bool {
