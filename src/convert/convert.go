@@ -17,9 +17,20 @@ func (p *linkParser) Scan() bool {
 	return p.input.Scan()
 }
 
-func (p *linkParser) Next() string {
-	return ""
+func (p *linkParser) Next() {
+	c := p.input.Text()
+	switch c {
+	case "<":
+		scanAngleLink()
+	case "[":
+		scanLinkOrFootnote()
+	default:
+		p.seen.WriteString(c)
+	}
 }
+
+func (p *linkParser) scanAngleLink()      {}
+func (p *linkParser) scanLinkOrFootnote() {}
 
 func Convert(markdown string) string {
 	scanner := bufio.NewScanner(strings.NewReader(markdown))
