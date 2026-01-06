@@ -29,6 +29,7 @@ func (p *linkParser) Next() {
 		scanAngleLink()
 	case "[":
 		scanLinkOrFootnote()
+	//TODO: also handle image links starting ![
 	default:
 		p.seen.WriteString(c)
 	}
@@ -49,7 +50,55 @@ func (p *linkParser) scanAngleLink() {
 	p.links = append(p.links, l)
 }
 
-func (p *linkParser) scanLinkOrFootnote() {}
+func (p *linkParser) scanLinkOrFootnote() {
+	url := strings.Builder{}
+	text := strings.Builder{}
+	//Scan link text
+	for p.input.Scan() {
+		c := p.input.Text()
+		//TODO: look up whether markdown allows nested [] in link text
+		if c == "]" {
+			break
+		} else {
+			text.WriteString(c)
+		}
+	}
+	//Scan url
+
+	//First make sure we actually do have a url coming
+	if !p.input.Scan() {
+		p.seen.WriteString(text.String())
+		return
+	}
+
+	c := p.input.Text()
+	if c != "(" {
+		p.seen.WriteString(text.String())
+		p.seen.WriteString(c)
+		return
+	}
+	parenDepth := 0
+	for p.input.Scan() {
+		c := p.input.Text()
+		//This would be so much simpler if urls couldn't have parentheses in them...
+		if c == "(" {
+			parenDepth += 1
+			url.WriteString(c)
+		} else if c == ")" {
+			if parenDepth == 0 {
+				break
+			} else {
+				parenDepth -= 1
+				url.WriteString(c)
+			}
+		} else {
+			url.WriteString(c)
+		}
+	}
+	l := link{url: url.String(), text: text.String()}
+	p.links = append(p.links, l)
+
+}
 
 func Convert(markdown string) string {
 	scanner := bufio.NewScanner(strings.NewReader(markdown))
