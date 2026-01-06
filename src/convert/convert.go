@@ -7,6 +7,20 @@ import (
 	"strings"
 )
 
+type linkParser struct {
+	input *bufio.Scanner
+	seen  strings.Builder
+	links []string
+}
+
+func (p *linkParser) Scan() bool {
+	return p.input.Scan()
+}
+
+func (p *linkParser) Next() string {
+	return ""
+}
+
 func Convert(markdown string) string {
 	scanner := bufio.NewScanner(strings.NewReader(markdown))
 	output := strings.Builder{}
