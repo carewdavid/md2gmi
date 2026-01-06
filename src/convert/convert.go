@@ -34,7 +34,21 @@ func (p *linkParser) Next() {
 	}
 }
 
-func (p *linkParser) scanAngleLink()      {}
+// Parse a bare link like <https://example.com>
+func (p *linkParser) scanAngleLink() {
+	url := strings.Builder{}
+	for p.input.Scan() {
+		c := p.input.Text()
+		if c == ">" {
+			break
+		} else {
+			url.WriteString(c)
+		}
+	}
+	l := link{url: url.String(), text: ""}
+	p.links = append(p.links, l)
+}
+
 func (p *linkParser) scanLinkOrFootnote() {}
 
 func Convert(markdown string) string {
