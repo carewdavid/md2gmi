@@ -54,6 +54,7 @@ func (p *linkParser) scanLinkOrFootnote() {
 	url := strings.Builder{}
 	text := strings.Builder{}
 	//Scan link text
+	//TODO: handle footnotes
 	for p.input.Scan() {
 		c := p.input.Text()
 		//TODO: look up whether markdown allows nested [] in link text
@@ -117,6 +118,6 @@ func ConvertLine(markdown string) string {
 
 // Format linkTarget and linkText as a gemtext link. The format is extremely simple:
 // => gemini://example.com/ Example Text
-func FormatLink(linkTarget *url.URL, linkText string) string {
-	return fmt.Sprintf("=> %v %v\n", linkTarget.String(), linkText)
+func FormatLink(linkTarget string, linkText string) string {
+	return fmt.Sprintf("=> %v %v\n", linkTarget, linkText)
 }
