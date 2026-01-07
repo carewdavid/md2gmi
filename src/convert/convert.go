@@ -3,7 +3,6 @@ package convert
 import (
 	"bufio"
 	"fmt"
-	"net/url"
 	"strings"
 )
 
@@ -18,6 +17,13 @@ type link struct {
 	text string
 }
 
+func newParser(input string) *linkParser {
+	parser := linkParser{input: bufio.NewScanner(strings.NewReader(input)),
+		seen:  strings.Builder{},
+		links: make([]link, 0)}
+	return &parser
+}
+
 func (l link) String() string {
 	return FormatLink(l.url, l.text)
 }
@@ -30,9 +36,9 @@ func (p *linkParser) Next() {
 	c := p.input.Text()
 	switch c {
 	case "<":
-		scanAngleLink()
+		p.scanAngleLink()
 	case "[":
-		scanLinkOrFootnote()
+		p.scanLinkOrFootnote()
 	//TODO: also handle image links starting ![
 	default:
 		p.seen.WriteString(c)
