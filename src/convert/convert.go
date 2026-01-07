@@ -131,7 +131,7 @@ func ConvertLine(markdown string) string {
 	output := strings.Builder{}
 	output.WriteString(parser.seen.String())
 	for _, link := range parser.links {
-		output.WriteString(link.String())
+		output.WriteString(link.String() + "\n")
 	}
 	return output.String()
 }
@@ -139,5 +139,6 @@ func ConvertLine(markdown string) string {
 // Format linkTarget and linkText as a gemtext link. The format is extremely simple:
 // => gemini://example.com/ Example Text
 func FormatLink(linkTarget string, linkText string) string {
-	return fmt.Sprintf("=> %v %v\n", linkTarget, linkText)
+	link := fmt.Sprintf("=> %v %v", linkTarget, linkText)
+	return strings.TrimSpace(link)
 }
