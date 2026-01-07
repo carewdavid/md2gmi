@@ -9,8 +9,9 @@ func TestConvertLine(t *testing.T) {
 	}{
 		{"", ""},
 		{"The quick brown fox jumps over the lazy dog.", "The quick brown fox jumps over the lazy dog."},
-		{"<https://example.com/>", "=> https://example.com\n"},
+		{"<https://example.com/>", "=> https://example.com/\n"},
 		{"[This is a test link.](https://example.com)", "=> https://example.com This is a test link.\n"},
+		{"[Exemplar on Wikipedia](https://en.wikipedia.org/wiki/Exemplar_(disambiguation)", "=> https://en.wikipedia.org/wiki/Exemplar_(disambiguation) Exemplar on Wikipedia\n"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.in, func(t *testing.T) {
