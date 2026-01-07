@@ -21,6 +21,7 @@ func newParser(input string) *linkParser {
 	parser := linkParser{input: bufio.NewScanner(strings.NewReader(input)),
 		seen:  strings.Builder{},
 		links: make([]link, 0)}
+	parser.input.Split(bufio.ScanRunes)
 	return &parser
 }
 
