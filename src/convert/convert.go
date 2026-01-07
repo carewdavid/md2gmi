@@ -123,7 +123,16 @@ func Convert(markdown string) string {
 }
 
 func ConvertLine(markdown string) string {
-	return markdown
+	parser := newParser(markdown)
+	for parser.Scan() {
+		parser.Next()
+	}
+	output := strings.Builder{}
+	output.WriteString(parser.seen.String())
+	for _, link := range parser.links {
+		output.WriteString(link.String())
+	}
+	return output.String()
 }
 
 // Format linkTarget and linkText as a gemtext link. The format is extremely simple:
