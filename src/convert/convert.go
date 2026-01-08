@@ -108,6 +108,12 @@ func (p *linkParser) scanLinkOrFootnote() {
 		}
 	}
 	l := link{url: url.String(), text: text.String()}
+	//Make sure we write the link text back to the source paragraph instead of snipping it out.
+	//There are two areas for improvement:
+	//1. We don't want to do this if the link is the only thing in the paragraph.
+	//2. It could use a nicer indicator that there is a link attached to a part of the text. I.e. numbered footnotes.
+	//Either or both of those may need some restructuring
+	p.seen.WriteString(l.text + "[*]")
 	p.links = append(p.links, l)
 
 }
