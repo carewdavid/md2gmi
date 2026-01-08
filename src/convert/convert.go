@@ -136,7 +136,7 @@ func ConvertLine(markdown string) string {
 		parser.Next()
 	}
 	output := strings.Builder{}
-	output.WriteString(parser.seen.String())
+	output.WriteString(parser.seen.String() + "\n")
 	for _, link := range parser.links {
 		output.WriteString(link.String() + "\n")
 	}
