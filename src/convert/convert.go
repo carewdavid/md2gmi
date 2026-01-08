@@ -85,7 +85,8 @@ func (p *linkParser) scanLinkOrFootnote() {
 
 	c := p.input.Text()
 	if c != "(" {
-		p.seen.WriteString(text.String())
+		//Make sure to replace square brackets that might have been eaten by the parser
+		p.seen.WriteString("[" + text.String() + "]")
 		p.seen.WriteString(c)
 		return
 	}
