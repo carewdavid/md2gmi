@@ -125,7 +125,7 @@ func Convert(markdown string) string {
 	//Assume one paragraph per line
 	//TODO: more sophisticated chunking of input text
 	for scanner.Scan() {
-		output.WriteString(ConvertLine(scanner.Text()))
+		output.WriteString(ConvertLine(scanner.Text()) + "\n")
 	}
 	return output.String()
 }
@@ -135,10 +135,28 @@ func ConvertLine(markdown string) string {
 	for parser.Scan() {
 		parser.Next()
 	}
+	lineOnlyHasLink := false
 	output := strings.Builder{}
-	output.WriteString(parser.seen.String() + "\n")
-	for _, link := range parser.links {
-		output.WriteString(link.String() + "\n")
+	seenAsString := parser.seen.String()
+	if len(seenAsString) == 0 || seenAsString == "[*]" {
+		lineOnlyHasLink = true
+	}
+
+	if !lineOnlyHasLink {
+		output.WriteString(seenAsString)
+	}
+
+	for i, link := range parser.links {
+		if i == 0 && !lineOnlyHasLink {
+			output.WriteString("\n")
+		}
+
+		output.WriteString(link.String())
+		if i == len(parser.links)-1 {
+			continue
+		} else {
+			output.WriteString("\n")
+		}
 	}
 	return output.String()
 }
