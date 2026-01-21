@@ -7,9 +7,10 @@ import (
 )
 
 type linkParser struct {
-	input *bufio.Scanner
-	seen  strings.Builder
-	links []link
+	input           *bufio.Scanner
+	seen            strings.Builder
+	links           []link
+	lineOnlyHasLink bool
 }
 
 type link struct {
@@ -19,8 +20,9 @@ type link struct {
 
 func newParser(input string) *linkParser {
 	parser := linkParser{input: bufio.NewScanner(strings.NewReader(input)),
-		seen:  strings.Builder{},
-		links: make([]link, 0)}
+		seen:            strings.Builder{},
+		links:           make([]link, 0),
+		lineOnlyHasLink: true}
 	parser.input.Split(bufio.ScanRunes)
 	return &parser
 }
@@ -42,6 +44,7 @@ func (p *linkParser) Next() {
 		p.scanLinkOrFootnote()
 	//TODO: also handle image links starting ![
 	default:
+		p.lineOnlyHasLink = false
 		p.seen.WriteString(c)
 	}
 }
@@ -135,19 +138,15 @@ func ConvertLine(markdown string) string {
 	for parser.Scan() {
 		parser.Next()
 	}
-	lineOnlyHasLink := false
 	output := strings.Builder{}
 	seenAsString := parser.seen.String()
-	if len(seenAsString) == 0 || seenAsString == "[*]" {
-		lineOnlyHasLink = true
-	}
 
-	if !lineOnlyHasLink {
+	if !parser.lineOnlyHasLink {
 		output.WriteString(seenAsString)
 	}
 
 	for i, link := range parser.links {
-		if i == 0 && !lineOnlyHasLink {
+		if i == 0 && !parser.lineOnlyHasLink {
 			output.WriteString("\n")
 		}
 
