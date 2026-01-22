@@ -38,6 +38,10 @@ func (p *linkParser) Scan() bool {
 func (p *linkParser) Next() {
 	c := p.input.Text()
 	switch c {
+	//TODO: Handle code fences
+	case "`":
+		p.seen.WriteString(c)
+		p.scanQuote()
 	case "<":
 		p.scanAngleLink()
 	case "[":
@@ -46,6 +50,18 @@ func (p *linkParser) Next() {
 	default:
 		p.lineOnlyHasLink = false
 		p.seen.WriteString(c)
+	}
+}
+
+// Parse an inline quote in backticks
+func (p *linkParser) scanQuote() {
+	//All we really do is advance the parser to the next "`". Take care to include the backticks themselves in the output
+	for p.input.Scan() {
+		c := p.input.Text()
+		p.seen.WriteString(c)
+		if c == "`" {
+			break
+		}
 	}
 }
 
